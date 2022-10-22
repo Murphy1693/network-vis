@@ -1,21 +1,23 @@
 import React, { useState } from "react";
 import Row from "./Row.js";
 
-const NodeBox = ({ nodeInfo, color }) => {
+const NodeBox = ({ nodeInfo, color, colors }) => {
   const [page, setPage] = useState(0);
-  console.log(nodeInfo);
+  console.log("NODEINFO", nodeInfo);
   let style = {
     width: "fit-content",
     height: "fit-content",
     position: "relative",
     display: "flex",
     margin: "auto",
+    // minWidth: color === "red" ? "45%" : 0,
     flexDirection: "column",
-    border: `4px solid ${color}`,
+    border: `4px solid ${color || "black"}`,
   };
 
   return (
     <div style={style} className="node-box">
+      <pre style={{ position: "absolute", top: "-30px", left: 0 }}>{page}</pre>
       <button
         onClick={() => {
           if (page !== 0) {
@@ -27,16 +29,95 @@ const NodeBox = ({ nodeInfo, color }) => {
       </button>
       <button
         onClick={() => {
-          if (page !== nodeInfo?.observed_genotype.length - 1) {
+          if (page !== nodeInfo?.observed_genotype_color.length - 1) {
             setPage(page + 1);
           }
         }}
       >
         Next Page
       </button>
-      {nodeInfo?.observed_genotype[page].map((obs_geno, i) => {
-        return <Row color={color} key={i} row={obs_geno.genotype}></Row>;
-      })}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          paddingLeft: "5px",
+          paddingRight: "5px",
+        }}
+        className="info-container"
+      >
+        <div
+          style={{
+            fontWeight: "bold",
+            fontSize: "12px",
+            display: "flex",
+            gap: "5px",
+          }}
+        >
+          <span>{nodeInfo?.id}</span>
+          <span>{"Observed"}</span>
+        </div>
+        {color === "red" ? (
+          <span
+            style={{
+              color: color,
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            {nodeInfo?.total}
+          </span>
+        ) : nodeInfo.shared !== undefined && nodeInfo.total !== undefined ? (
+          <span
+            style={{
+              color: color,
+              fontWeight: "bold",
+              textAlign: "center",
+            }}
+          >
+            {nodeInfo?.shared + "/" + nodeInfo?.total}
+          </span>
+        ) : null}
+      </div>
+      <div style={{ display: "flex" }}>
+        <div
+          style={{ display: "inline-block", width: "fit-content" }}
+          className="row-container"
+        >
+          {nodeInfo?.observed_genotype_color[page].map((obs_geno, i) => {
+            return <Row color={color} key={i} row={obs_geno.genotype}></Row>;
+          })}
+        </div>
+        <div
+          className="shared-container"
+          style={
+            color === "red"
+              ? { display: "flex", flexDirection: "column", padding: "10px" }
+              : null
+          }
+        >
+          {color === "red"
+            ? nodeInfo?.matches?.map((shared, i) => {
+                return (
+                  <div
+                    style={{
+                      display: "flex",
+                      color: colors[i],
+                      marginTop: "5px",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    <span key={i}>{shared + "/" + nodeInfo?.total}</span>
+                    {nodeInfo?.source[i] !== undefined ? (
+                      <span style={{ marginLeft: "5px", color: "red" }}>
+                        {nodeInfo.source[i] ? "S" : "T"}
+                      </span>
+                    ) : null}
+                  </div>
+                );
+              })
+            : null}
+        </div>
+      </div>
     </div>
   );
 };

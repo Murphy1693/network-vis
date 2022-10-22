@@ -1,12 +1,18 @@
 import React from "react";
 
-const AlleleBox = ({ boxSize = "7", borderColor = "black", color, value }) => {
+const AlleleBox = ({ boxSize = "10", borderColor = "black", color, value }) => {
   let style = {
     boxSizing: "border-box",
     width: `${boxSize}px`,
     aspectRatio: "1/1",
     border: `1px solid ${
-      value === "1" ? color : value === "2" ? "red" : "black"
+      value === "1"
+        ? color
+        : value === "2"
+        ? "red"
+        : value === "3"
+        ? "red"
+        : "black"
     }`,
     backgroundColor:
       value === "0"

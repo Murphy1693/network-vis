@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import Graph from "./Graph.js";
 import Panel from "./Panel.js";
+import { createColorAndCount } from "../compareFunctions.js";
 
 import * as d3 from "d3";
 // import Graph2 from "./Graph/Graph2.js";
@@ -15,6 +16,8 @@ const App = () => {
   const [links, setLinks] = useState([]);
   const [selectedNodes, setSelectedNodes] = useState([]);
   const [simulation, setSimulation] = useState(null);
+  const [primaryNode, setPrimaryNode] = useState(null);
+  const [secondaryNodes, setSecondaryNodes] = useState([]);
 
   let clearSelected = function () {
     setSelectedNodes([]);
@@ -35,6 +38,26 @@ const App = () => {
       console.log(data);
     });
   }, []);
+
+  useEffect(() => {
+    if (active && selectedNodes.length === 0) {
+      console.log("COLOR AND COUNT: ", createColorAndCount(nodes[active]));
+      // setPrimaryNode(nodes[active]);
+    } else if (active && selectedNodes.length > 0) {
+      selectedNodes.forEach(function (nodeIndex) {
+        console.log(
+          "COLOR AND COUNT ARR",
+          createColorAndCount(nodes[active], nodes[nodeIndex])
+        );
+      });
+    } else if (!active) {
+      console.log(
+        selectedNodes.map((nodeIndex) => {
+          return createColorAndCount(nodes[nodeIndex]);
+        })
+      );
+    }
+  }, [selectedNodes, active]);
 
   let handleNodeClick = function (id, event, mutableNodes, simulation) {
     simulation.stop();
@@ -124,11 +147,13 @@ const App = () => {
       </button>
       <canvas width="1200" height="900" ref={refElement} />
       <Panel
+        clearSelected={clearSelected}
         colors={colors}
         nodes={nodes}
         links={links}
         selectedNodes={selectedNodes}
         active={active}
+        // activeNode={primaryNode}
       ></Panel>
     </div>
   );

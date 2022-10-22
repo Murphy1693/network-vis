@@ -8,7 +8,14 @@ let zip = function (arr1, arr2, callback) {
   }
 };
 
-const Panel = ({ selectedNodes, active, nodes, links, colors }) => {
+const Panel = ({
+  selectedNodes,
+  active,
+  nodes,
+  links,
+  colors,
+  clearSelected,
+}) => {
   let [compareNodes, setCompareNodes] = useState([]);
   let [activeNode, setActiveNode] = useState({});
 
@@ -18,36 +25,59 @@ const Panel = ({ selectedNodes, active, nodes, links, colors }) => {
     if (active) {
       newActiveNode = {
         ...nodes[active],
-        observed_genotype: paginateArray(nodes[active].observed_genotype),
+        observed_genotype_color: paginateArray(nodes[active].observed_genotype),
+        source: [],
       };
-
+      newNodes = selectedNodes.map(function (nodeIndex, i) {
+        return compareObserved(nodes[active], nodes[nodeIndex], newActiveNode);
+      });
+      for (let i = 0; i < links.length; i++) {
+        if (
+          links[i].to === nodes[active].id ||
+          links[i].from === nodes[active].id
+        ) {
+          for (let y = 0; y < selectedNodes.length; y++) {
+            if (nodes[selectedNodes[y]].id === links[i].from) {
+              newNodes[y].target = false;
+              newActiveNode.source[y] = false;
+            } else if (nodes[selectedNodes[y]].id === links[i].to) {
+              newNodes[y].target = true;
+              newActiveNode.source[y] = true;
+            }
+          }
+        }
+      }
+    } else {
       newNodes = selectedNodes.map(function (nodeIndex, i) {
         return {
-          observed_genotype: paginateArray(
-            compareObserved(nodes[active], nodes[nodeIndex], newActiveNode)
+          id: nodes[nodeIndex].id,
+          observed_genotype_color: paginateArray(
+            nodes[nodeIndex].observed_genotype
           ),
           color: colors[i],
         };
       });
-      console.log(compareNodes);
-    } else {
-      newNodes = selectedNodes.map(function (nodeIndex, i) {
-        return {
-          observed_genotype: paginateArray(nodes[nodeIndex].observed_genotype),
-          color: colors[i],
-        };
-      });
     }
-    console.log("newNodes: ", newNodes);
     setActiveNode(newActiveNode);
     setCompareNodes(newNodes);
   }, [active, selectedNodes]);
 
   return (
     <div className="panel-container">
+      <button
+        onClick={() => {
+          clearSelected();
+        }}
+      >
+        Clear Selected
+      </button>
       <div className="panel-primary-container">
         {active ? (
-          <NodeBox color={"red"} nodeInfo={activeNode}></NodeBox>
+          <NodeBox
+            color={"red"}
+            nodeInfo={activeNode}
+            colors={colors}
+          ></NodeBox>
         ) : null}
       </div>
       <div className="panel-compare-container">
