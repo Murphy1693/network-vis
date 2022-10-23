@@ -167,7 +167,7 @@ class Graph {
       .force("y", forceY)
       .force("link", forceLink)
       .force("charge", forceNode)
-      .force("center", d3.forceCenter(this.width / 2, this.height / 2))
+      .force("center", d3.forceCenter(this.width / 4, this.height / 2))
       .on("tick", this.ticked);
   };
 }

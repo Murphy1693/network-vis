@@ -75,7 +75,6 @@ export const createColorAndCount = (activeNode, selectedNode) => {
   let primary_total_count = 0;
   let selected_total_count = 0;
   let shared_count = 0;
-  newActiveNode.matches = newActiveNode.matches || [];
   let observed_genotype_display = [];
   let latent_genotype_display = [];
   if (activeNode && selectedNode) {
@@ -107,24 +106,24 @@ export const createColorAndCount = (activeNode, selectedNode) => {
             }
           }
         });
-        observed_genotype_display.push(newStr);
+        observed_genotype_display.push({ genotype: newStr });
       }
     );
     newActiveNode.observed_genotype_display = paginateArray(
       newActiveNode.observed_genotype
     );
     newActiveNode.total = primary_total_count;
-    newActiveNode.matches.push(shared_count);
     newSelectedNode.observed_genotype_display = paginateArray(
       observed_genotype_display
     );
     newSelectedNode.total = selected_total_count;
     newSelectedNode.shared_count = shared_count;
+    console.log(newActiveNode, newSelectedNode);
     return [newActiveNode, newSelectedNode];
   } else if (activeNode && !selectedNode) {
-    newActiveNode.observed_genotype.forEach((allele_str) => {
-      for (let i = 0; i < allele_str.length; i++) {
-        if (allele_str[i] === "1") {
+    newActiveNode.observed_genotype.forEach((geno_obj) => {
+      for (let i = 0; i < geno_obj.genotype.length; i++) {
+        if (geno_obj.genotype[i] === "1") {
           primary_total_count++;
         }
       }

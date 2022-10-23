@@ -15,70 +15,72 @@ const Panel = ({
   links,
   colors,
   clearSelected,
+  activeNode,
+  compareNodes,
 }) => {
-  let [compareNodes, setCompareNodes] = useState([]);
-  let [activeNode, setActiveNode] = useState({});
+  console.log("ACTIVE NODE IN PANEL: ", activeNode);
+  // let [compareNodes, setCompareNodes] = useState([]);
+  // let [activeNode, setActiveNode] = useState({});
 
-  useEffect(() => {
-    let newNodes;
-    let newActiveNode;
-    if (active) {
-      newActiveNode = {
-        ...nodes[active],
-        observed_genotype_color: paginateArray(nodes[active].observed_genotype),
-        source: [],
-      };
-      newNodes = selectedNodes.map(function (nodeIndex, i) {
-        return compareObserved(nodes[active], nodes[nodeIndex], newActiveNode);
-      });
-      for (let i = 0; i < links.length; i++) {
-        if (
-          links[i].to === nodes[active].id ||
-          links[i].from === nodes[active].id
-        ) {
-          for (let y = 0; y < selectedNodes.length; y++) {
-            if (nodes[selectedNodes[y]].id === links[i].from) {
-              newNodes[y].target = false;
-              newActiveNode.source[y] = false;
-            } else if (nodes[selectedNodes[y]].id === links[i].to) {
-              newNodes[y].target = true;
-              newActiveNode.source[y] = true;
-            }
-          }
-        }
-      }
-    } else {
-      newNodes = selectedNodes.map(function (nodeIndex, i) {
-        return {
-          id: nodes[nodeIndex].id,
-          observed_genotype_color: paginateArray(
-            nodes[nodeIndex].observed_genotype
-          ),
-          color: colors[i],
-        };
-      });
-    }
-    setActiveNode(newActiveNode);
-    setCompareNodes(newNodes);
-  }, [active, selectedNodes]);
+  // useEffect(() => {
+  //   let newNodes;
+  //   let newActiveNode;
+  //   if (active) {
+  //     newActiveNode = {
+  //       ...nodes[active],
+  //       observed_genotype_color: paginateArray(nodes[active].observed_genotype),
+  //       source: [],
+  //     };
+  //     newNodes = selectedNodes.map(function (nodeIndex, i) {
+  //       return compareObserved(nodes[active], nodes[nodeIndex], newActiveNode);
+  //     });
+  // for (let i = 0; i < links.length; i++) {
+  //   if (
+  //     links[i].to === nodes[active].id ||
+  //     links[i].from === nodes[active].id
+  //   ) {
+  //     for (let y = 0; y < selectedNodes.length; y++) {
+  //       if (nodes[selectedNodes[y]].id === links[i].from) {
+  //         newNodes[y].target = false;
+  //         newActiveNode.source[y] = false;
+  //       } else if (nodes[selectedNodes[y]].id === links[i].to) {
+  //         newNodes[y].target = true;
+  //         newActiveNode.source[y] = true;
+  //       }
+  //     }
+  //   }
+  // }
+  //   } else {
+  //     newNodes = selectedNodes.map(function (nodeIndex, i) {
+  //       return {
+  //         id: nodes[nodeIndex].id,
+  //         observed_genotype_color: paginateArray(
+  //           nodes[nodeIndex].observed_genotype
+  //         ),
+  //         color: colors[i],
+  //       };
+  //     });
+  //   }
+  //   setActiveNode(newActiveNode);
+  //   setCompareNodes(newNodes);
+  // }, [active, selectedNodes]);
 
   return (
     <div className="panel-container">
-      <button
-        onClick={() => {
-          clearSelected();
-        }}
-      >
-        Clear Selected
-      </button>
+      <div className="header" style={{ textAlign: "center", fontSize: "32px" }}>
+        Primary
+      </div>
       <div className="panel-primary-container">
-        {active ? (
+        {activeNode ? (
           <NodeBox
             color={"red"}
             nodeInfo={activeNode}
             colors={colors}
           ></NodeBox>
         ) : null}
+      </div>
+      <div className="header" style={{ textAlign: "center", fontSize: "32px" }}>
+        Secondaries
       </div>
       <div className="panel-compare-container">
         {compareNodes?.map((obj, i) => {

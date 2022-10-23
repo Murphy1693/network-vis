@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Graph from "./Graph.js";
 import Panel from "./Panel.js";
 import { createColorAndCount } from "../compareFunctions.js";
+import FileSelector from "./FileSelector/FileSelector.js";
 
 import * as d3 from "d3";
 // import Graph2 from "./Graph/Graph2.js";
@@ -40,22 +41,48 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (active && selectedNodes.length === 0) {
-      console.log("COLOR AND COUNT: ", createColorAndCount(nodes[active]));
-      // setPrimaryNode(nodes[active]);
+    if (active && !selectedNodes.length) {
+      setPrimaryNode(createColorAndCount(nodes[active]));
     } else if (active && selectedNodes.length > 0) {
-      selectedNodes.forEach(function (nodeIndex) {
-        console.log(
-          "COLOR AND COUNT ARR",
-          createColorAndCount(nodes[active], nodes[nodeIndex])
+      let primary;
+      let secondaries = selectedNodes.map(function (nodeIndex) {
+        const [prim, sec] = createColorAndCount(
+          nodes[active],
+          nodes[nodeIndex]
         );
+        primary = prim;
+        return sec;
       });
+      primary.matches = [];
+      primary.source = [];
+      for (let i = 0; i < secondaries.length; i++) {
+        primary.matches.push(secondaries[i].shared_count);
+      }
+      for (let i = 0; i < links.length; i++) {
+        if (links[i].to === primary.id || links[i].from === primary.id) {
+          for (let y = 0; y < secondaries.length; y++) {
+            if (secondaries[y].id === links[i].from) {
+              secondaries[y].target = false;
+              primary.source[y] = false;
+            } else if (nodes[selectedNodes[y]].id === links[i].to) {
+              secondaries[y].target = true;
+              primary.source[y] = true;
+            }
+          }
+        }
+      }
+      setPrimaryNode(primary);
+      setSecondaryNodes(secondaries);
     } else if (!active) {
-      console.log(
+      setPrimaryNode(null);
+      setSecondaryNodes(
         selectedNodes.map((nodeIndex) => {
           return createColorAndCount(nodes[nodeIndex]);
         })
       );
+    }
+    if (!selectedNodes.length) {
+      setSecondaryNodes([]);
     }
   }, [selectedNodes, active]);
 
@@ -74,11 +101,8 @@ const App = () => {
       }
     } else if (event.shiftKey && id !== active) {
       if (!selectedNodes.includes(id)) {
-        console.log("mutating: ", mutableNodes[id]);
-        mutableNodes[id].color = "yellow";
         newNodes.push(id);
       } else {
-        mutableNodes[id].color = "black";
         newNodes.splice(newNodes.indexOf(id), 1);
       }
     } else {
@@ -133,7 +157,8 @@ const App = () => {
     <div className="container">
       <button
         onClick={() => {
-          console.table(nodes);
+          console.log(primaryNode);
+          console.log(secondaryNodes);
         }}
       >
         Nodes
@@ -145,15 +170,17 @@ const App = () => {
       >
         Links
       </button>
+      <FileSelector></FileSelector>
       <canvas width="1200" height="900" ref={refElement} />
       <Panel
         clearSelected={clearSelected}
         colors={colors}
-        nodes={nodes}
-        links={links}
-        selectedNodes={selectedNodes}
-        active={active}
-        // activeNode={primaryNode}
+        // nodes={nodes}
+        // links={links}
+        // selectedNodes={selectedNodes}
+        // active={active}
+        activeNode={primaryNode}
+        compareNodes={secondaryNodes}
       ></Panel>
     </div>
   );
