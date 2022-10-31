@@ -1,34 +1,125 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useReducer } from "react";
 import Graph from "./Graph.js";
 import Panel from "./Panel.js";
 import { createColorAndCount } from "../compareFunctions.js";
 import FileSelector from "./FileSelector/FileSelector.js";
+import GraphPanel from "./GraphPanel/GraphPanel.js";
 
 import * as d3 from "d3";
 // import Graph2 from "./Graph/Graph2.js";
 // sample_id,Ara2,AS1,AS11,AS12,AS14,AS15,AS19,AS2,AS21,AS25,AS3,AS31,AS32,AS34,AS7,AS8,B7M19,PFG377,PfPK2,PolyA,TA1,TA109,TA40,TA60,TA81,TA87,Date
+/*
+[15, 127, 133, 41, 124, 137, 142, 192, 199]
+*/
 
 let vis;
 
+let defaultGraph = {
+  nodeSize: 5,
+  nodeOpacity: 1,
+  nodeColor: "#000000",
+  linkDistance: 50,
+  arrowSize: 4,
+  linkOpacity: 1,
+  primaryLinkColor: "#000000",
+  secondaryLinkColor: "#000000",
+  toggleAdditionalLinks: false,
+};
+
+const reducer = (state, action) => {
+  for (let k in state) {
+    if (action.prop === k) {
+      return { ...state, [[k]]: action.newValue };
+    }
+  }
+};
+
 const App = () => {
   const refElement = useRef(null);
+  const inputFile = useRef(null);
+  const [activeFile, setActiveFile] = useState(null);
+  const [selectedFile, setSelectedFile] = useState(null);
   const [active, setActive] = useState(null);
   const [nodes, setNodes] = useState([]);
   const [links, setLinks] = useState([]);
   const [selectedNodes, setSelectedNodes] = useState([]);
   const [simulation, setSimulation] = useState(null);
+  const simulationRef = useRef(null);
   const [primaryNode, setPrimaryNode] = useState(null);
   const [secondaryNodes, setSecondaryNodes] = useState([]);
+  const [additionalLinks, setAdditionalLinks] = useState([]);
+  const [toggleLinks, setToggleLinks] = useState(false);
+  const [link_distance, setLink_distance] = useState(50);
+  const [arrowSize, setArrowSize] = useState(4);
+  const [nodeColor, setNodeColor] = useState("#000000");
+  const [nodeOpacity, setNodeOpacity] = useState(1);
+  const [linkOpacity, setLinkOpacity] = useState(1);
+  const [nodeSize, setNodeSize] = useState(5);
+  const [graphSettings, graphDispatch] = useReducer(reducer, defaultGraph);
+
+  let additionalToggle = function () {
+    simulationRef.current.stop();
+    setToggleLinks(!toggleLinks);
+  };
+
+  useEffect(() => {
+    setAdditionalLinks(
+      [
+        { from: "15", to: "84" },
+        { from: "15", to: "127" },
+        { from: "15", to: "133" },
+        { from: "15", to: "41" },
+        { from: "15", to: "124" },
+        { from: "15", to: "137" },
+        { from: "15", to: "142" },
+        { from: "15", to: "192" },
+        { from: "15", to: "199" },
+      ].map((link) => {
+        nodes.forEach((node) => {
+          if (node.id === link.from) {
+            console.log("triggered");
+            link.source = node;
+          } else if (node.id === link.to) {
+            link.target = node;
+          }
+        });
+        return link;
+      })
+    );
+  }, [nodes]);
 
   let clearSelected = function () {
     setSelectedNodes([]);
   };
 
+  const initializeData = (data) => {
+    setActiveFile(selectedFile);
+    setSelectedFile(null);
+    setSelectedNodes([]);
+    setActive(null);
+    setPrimaryNode(null);
+    setSecondaryNodes([]);
+    setNodes(data.nodes);
+    setLinks(
+      data.network.map((ele) => {
+        return {
+          ...ele,
+          source: data.nodes[parseInt(ele.from) - 1],
+          target: data.nodes[parseInt(ele.to) - 1],
+        };
+      })
+    );
+  };
+
   useEffect(() => {
     d3.json("/data/full_nodes.json").then((data) => {
-      setNodes(data.nodes);
       setLinks(
         data.network.map((ele) => {
+          data.nodes.forEach((node) => {
+            if (node.id === ele.to || node.id === ele.from) {
+              node.hasLink = true;
+            }
+          });
           return {
             ...ele,
             source: data.nodes[parseInt(ele.from) - 1],
@@ -37,6 +128,7 @@ const App = () => {
         })
       );
       console.log(data);
+      setNodes(data.nodes);
     });
   }, []);
 
@@ -86,8 +178,8 @@ const App = () => {
     }
   }, [selectedNodes, active]);
 
-  let handleNodeClick = function (id, event, mutableNodes, simulation) {
-    simulation.stop();
+  let handleNodeClick = function (id, event, mutableNodes) {
+    simulationRef.current.stop();
     let newNodes = [...selectedNodes];
     if (event.ctrlKey) {
       console.log("SETTING ACTIVE");
@@ -118,6 +210,10 @@ const App = () => {
     setSelectedNodes(newNodes);
   };
 
+  // useEffect(() => {
+
+  // }, [links])
+
   // let handleNodeClick = function (id, event, mutableNodes) {
   //   let newSelected = [...selectedNodes];
   //   mutableNodes[id].color = "yellow";
@@ -129,7 +225,19 @@ const App = () => {
 
   useEffect(() => {
     initVis();
-  }, [selectedNodes, links, nodes, simulation]);
+  }, [
+    selectedNodes,
+    links,
+    nodes,
+    simulation,
+    additionalLinks,
+    toggleLinks,
+    link_distance,
+    arrowSize,
+    nodeColor,
+    nodeOpacity,
+    linkOpacity,
+  ]);
 
   function initVis() {
     const d3Props = {
@@ -139,12 +247,21 @@ const App = () => {
       },
       colors: colors,
       showLinks: true,
-      width: 1500,
+      width: 2000,
       height: 1000,
       active: active,
       onDatapointClick: handleNodeClick,
       selected: selectedNodes,
       simulation: simulation,
+      additionalLinks: additionalLinks,
+      toggleLinks: toggleLinks,
+      simulationRef: simulationRef,
+      link_distance: link_distance,
+      arrowSize: arrowSize,
+      nodeColor: nodeColor,
+      nodeOpacity: nodeOpacity,
+      linkOpacity: linkOpacity,
+      nodeSize: nodeSize,
     };
     vis = new Graph(refElement.current, d3Props);
   }
@@ -155,23 +272,102 @@ const App = () => {
 
   return (
     <div className="container">
-      <button
+      <div>
+        <h1 style={{ textAlign: "center" }}>
+          Network Visualizer{graphSettings.nodeSize}
+        </h1>
+        <button
+          onClick={() => {
+            graphDispatch({
+              prop: "nodeSize",
+              newValue: graphSettings.nodeSize + 1,
+            });
+          }}
+        >
+          ADD NODE SIZE
+        </button>
+        <h3
+          style={
+            activeFile
+              ? { color: "green", textAlign: "center" }
+              : { visibility: "hidden" }
+          }
+        >
+          {activeFile ? activeFile.name : "placeholder"}
+        </h3>
+        <div style={{ position: "absolute", top: "0" }}>
+          <button
+            onClick={() => {
+              console.log(primaryNode);
+              console.log(secondaryNodes);
+            }}
+          >
+            Nodes
+          </button>
+          <button
+            onClick={() => {
+              console.table(links);
+              console.log(additionalLinks);
+            }}
+          >
+            Links
+          </button>
+          <button
+            onClick={() => {
+              additionalToggle();
+            }}
+          >
+            TOGGLE {"" + toggleLinks.current}
+          </button>
+          <button
+            onClick={() => {
+              if (link_distance !== 10) {
+                simulationRef.current.stop();
+                setLink_distance(link_distance - 10);
+              }
+            }}
+          >
+            LINK D
+          </button>
+          <button
+            onClick={() => {
+              simulationRef.current.stop();
+              setArrowSize(arrowSize + 1);
+              console.log(arrowSize);
+            }}
+          >
+            Arrow Size++
+          </button>
+        </div>
+      </div>
+      <GraphPanel
+        simulationRef={simulationRef}
+        setNodeColor={setNodeColor}
+        nodeColor={nodeColor}
+        arrowSize={arrowSize}
+        setArrowSize={setArrowSize}
+      ></GraphPanel>
+      {/* <FileSelector
+        initializeData={initializeData}
+        setSelectedFile={setSelectedFile}
+        inputFile={inputFile}
+        selectedFile={selectedFile}
+        activeFile={activeFile}
+      ></FileSelector> */}
+      {/* <button
         onClick={() => {
-          console.log(primaryNode);
-          console.log(secondaryNodes);
+          console.log(selectedFile);
+          let reader = new FileReader();
+          reader.readAsText(selectedFile);
+          reader.onload = function () {
+            initializeData(JSON.parse(reader.result));
+          };
+          // d3.json(selectedFile).then((data) => {
+          //   console.log(data);
+          // });
         }}
-      >
-        Nodes
-      </button>
-      <button
-        onClick={() => {
-          console.table(links);
-        }}
-      >
-        Links
-      </button>
-      <FileSelector></FileSelector>
-      <canvas width="1200" height="900" ref={refElement} />
+      ></button> */}
+      <canvas width="2000" height="900" ref={refElement} />
       <Panel
         clearSelected={clearSelected}
         colors={colors}

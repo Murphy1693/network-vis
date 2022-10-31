@@ -3,8 +3,8 @@ import Row from "./Row.js";
 import NodeHeader from "./NodeHeader.js";
 import NodeInfo from "./NodeInfo.js";
 
-const NodeBox = ({ nodeInfo, color, colors }) => {
-  const [page, setPage] = useState(0);
+const NodeBox = ({ nodeInfo, color, colors, page, setPage }) => {
+  // const [page, setPage] = useState(0);
   console.log("NODEINFO", nodeInfo);
   const makeRGBA = function (color, opacity = 0.2) {
     if (color === "red") {
@@ -20,8 +20,10 @@ const NodeBox = ({ nodeInfo, color, colors }) => {
     }
   };
   let style = {
+    pointerEvents: "all",
+    boxSizing: "border-box",
     width: "fit-content",
-    boxShadow: `${makeRGBA(color)} 0px 5px 15px`,
+    boxShadow: `black 0px 5px 15px`,
     backgroundColor: makeRGBA(color, 0.15),
     margin: "auto",
     border: `2px solid ${color || "black"}`,

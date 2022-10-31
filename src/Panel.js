@@ -18,7 +18,7 @@ const Panel = ({
   activeNode,
   compareNodes,
 }) => {
-  console.log("ACTIVE NODE IN PANEL: ", activeNode);
+  const [page, setPage] = useState(0);
   // let [compareNodes, setCompareNodes] = useState([]);
   // let [activeNode, setActiveNode] = useState({});
 
@@ -67,24 +67,29 @@ const Panel = ({
 
   return (
     <div className="panel-container">
-      <div className="header" style={{ textAlign: "center", fontSize: "32px" }}>
-        Primary
-      </div>
+      <h2 className="header">Primary</h2>
       <div className="panel-primary-container">
         {activeNode ? (
           <NodeBox
+            page={page}
+            setPage={setPage}
             color={"red"}
             nodeInfo={activeNode}
             colors={colors}
           ></NodeBox>
         ) : null}
       </div>
-      <div className="header" style={{ textAlign: "center", fontSize: "32px" }}>
-        Secondaries
-      </div>
+      <h2 className="header">Secondaries</h2>
       <div className="panel-compare-container">
         {compareNodes?.map((obj, i) => {
-          return <NodeBox color={colors[i]} nodeInfo={obj}></NodeBox>;
+          return (
+            <NodeBox
+              page={page}
+              setPage={setPage}
+              color={colors[i]}
+              nodeInfo={obj}
+            ></NodeBox>
+          );
         })}
       </div>
     </div>
