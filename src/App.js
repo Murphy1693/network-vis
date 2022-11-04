@@ -5,13 +5,6 @@ import { createColorAndCount } from "../compareFunctions.js";
 import FileSelector from "./FileSelector/FileSelector.js";
 import GraphPanel from "./GraphPanel/GraphPanel.js";
 
-import * as d3 from "d3";
-// import Graph2 from "./Graph/Graph2.js";
-// sample_id,Ara2,AS1,AS11,AS12,AS14,AS15,AS19,AS2,AS21,AS25,AS3,AS31,AS32,AS34,AS7,AS8,B7M19,PFG377,PfPK2,PolyA,TA1,TA109,TA40,TA60,TA81,TA87,Date
-/*
-[15, 127, 133, 41, 124, 137, 142, 192, 199]
-*/
-
 let vis;
 
 let defaultGraph = {
@@ -25,17 +18,16 @@ let defaultGraph = {
   primaryLinkColor: "#000000",
   secondaryLinkColor: "#000000",
   toggleAdditionalLinks: false,
+  nodeRepulsion: 10,
 };
 
-// const reducer = (state, action) => {
-//   for (let k in state) {
-//     if (action.prop === k) {
-//       simulationRef.current.stop();
-//       return { ...state, [[k]]: action.newValue };
-//     }
-//   }
-//   return state;
-// };
+let data = {
+  nodes: [],
+  links: [],
+  additionalLinks: [],
+  activeNode: null,
+  selectedNodes: [],
+};
 
 const App = () => {
   const reducer = (state, action) => {
@@ -56,18 +48,11 @@ const App = () => {
   const [nodes, setNodes] = useState([]);
   const [links, setLinks] = useState([]);
   const [selectedNodes, setSelectedNodes] = useState([]);
-  const [simulation, setSimulation] = useState(null);
   const simulationRef = useRef(null);
   const [primaryNode, setPrimaryNode] = useState(null);
   const [secondaryNodes, setSecondaryNodes] = useState([]);
   const [additionalLinks, setAdditionalLinks] = useState([]);
-  // const [toggleLinks, setToggleLinks] = useState(false);
-  // const [link_distance, setLink_distance] = useState(50);
-  // const [arrowSize, setArrowSize] = useState(4);
-  // const [nodeColor, setNodeColor] = useState("#000000");
-  // const [nodeOpacity, setNodeOpacity] = useState(1);
-  // const [linkOpacity, setLinkOpacity] = useState(1);
-  // const [nodeSize, setNodeSize] = useState(5);
+
   const [graphSettings, graphDispatch] = useReducer(reducer, defaultGraph);
 
   // let additionalToggle = function () {
