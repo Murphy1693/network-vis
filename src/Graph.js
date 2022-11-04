@@ -11,6 +11,8 @@ class Graph {
     this.selected = props.selected;
     this.links = props.data.links;
     this.active = props.active;
+    this.fontEnabled = true;
+    this.fontSettings = "10px Arial";
     this.additionalLinks = props.additionalLinks;
     this.additionalToggle = props.toggleLinks;
     this.link_distance = props.link_distance;
@@ -138,7 +140,11 @@ class Graph {
     this.context.globalAlpha = this.nodeOpacity;
     this.nodes.forEach((node) => {
       this.context.beginPath();
-
+      if (this.fontEnabled) {
+        this.context.fillStyle = "black";
+        this.context.font = this.fontSettings;
+        this.context.fillText(node.id, node.x, node.y + 15);
+      }
       this.drawNode(node);
       this.context.fillStyle =
         node.index === this.active

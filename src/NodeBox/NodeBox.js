@@ -20,33 +20,62 @@ const NodeBox = ({ nodeInfo, color, colors, page, setPage }) => {
     }
   };
   let style = {
+    position: "relative",
     pointerEvents: "all",
     boxSizing: "border-box",
     width: "fit-content",
     boxShadow: `black 0px 5px 15px`,
-    backgroundColor: makeRGBA(color, 0.15),
+    backgroundColor: "white",
     margin: "auto",
     border: `2px solid ${color || "black"}`,
   };
 
   return (
     <div style={style} className="node-box">
-      <NodeHeader
-        color={color}
-        page={page}
-        setPage={setPage}
-        nodeInfo={nodeInfo}
-      ></NodeHeader>
-      <div className="rows-container" style={{ display: "flex" }}>
-        <div
-          style={{ display: "inline-block", width: "fit-content" }}
-          className="row-container"
+      <div
+        style={{ backgroundColor: makeRGBA(color, 0.15) }}
+        className="node-alpha-background"
+      >
+        {/* <button
+          style={{
+            border: "none",
+            backgroundColor: "transparent",
+            position: "absolute",
+          }}
+          type="button"
+          class="close"
+          aria-label="Close"
         >
-          {nodeInfo?.observed_genotype_display[page].map((obs_geno, i) => {
-            return <Row color={color} key={i} row={obs_geno.genotype}></Row>;
-          })}
+          <span
+            style={{
+              fontSize: "40px",
+            }}
+            aria-hidden="true"
+          >
+            &times;
+          </span>
+        </button> */}
+        <NodeHeader
+          color={color}
+          page={page}
+          setPage={setPage}
+          nodeInfo={nodeInfo}
+        ></NodeHeader>
+        <div className="rows-container" style={{ display: "flex" }}>
+          <div
+            style={{ display: "inline-block", width: "fit-content" }}
+            className="row-container"
+          >
+            {nodeInfo?.observed_genotype_display[page].map((obs_geno, i) => {
+              return <Row color={color} key={i} row={obs_geno.genotype}></Row>;
+            })}
+          </div>
+          <NodeInfo
+            colors={colors}
+            color={color}
+            nodeInfo={nodeInfo}
+          ></NodeInfo>
         </div>
-        <NodeInfo colors={colors} color={color} nodeInfo={nodeInfo}></NodeInfo>
       </div>
     </div>
   );

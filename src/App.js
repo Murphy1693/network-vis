@@ -20,21 +20,34 @@ let defaultGraph = {
   nodeColor: "#000000",
   linkDistance: 50,
   arrowSize: 4,
-  linkOpacity: 1,
+  primaryLinkOpacity: 1,
+  secondaryLinkOpacity: 1,
   primaryLinkColor: "#000000",
   secondaryLinkColor: "#000000",
   toggleAdditionalLinks: false,
 };
 
-const reducer = (state, action) => {
-  for (let k in state) {
-    if (action.prop === k) {
-      return { ...state, [[k]]: action.newValue };
-    }
-  }
-};
+// const reducer = (state, action) => {
+//   for (let k in state) {
+//     if (action.prop === k) {
+//       simulationRef.current.stop();
+//       return { ...state, [[k]]: action.newValue };
+//     }
+//   }
+//   return state;
+// };
 
 const App = () => {
+  const reducer = (state, action) => {
+    console.log(action);
+    for (let k in state) {
+      if (action.prop === k) {
+        simulationRef.current.stop();
+        return { ...state, [[k]]: action.newValue };
+      }
+    }
+    return state;
+  };
   const refElement = useRef(null);
   const inputFile = useRef(null);
   const [activeFile, setActiveFile] = useState(null);
@@ -48,19 +61,19 @@ const App = () => {
   const [primaryNode, setPrimaryNode] = useState(null);
   const [secondaryNodes, setSecondaryNodes] = useState([]);
   const [additionalLinks, setAdditionalLinks] = useState([]);
-  const [toggleLinks, setToggleLinks] = useState(false);
-  const [link_distance, setLink_distance] = useState(50);
-  const [arrowSize, setArrowSize] = useState(4);
-  const [nodeColor, setNodeColor] = useState("#000000");
-  const [nodeOpacity, setNodeOpacity] = useState(1);
-  const [linkOpacity, setLinkOpacity] = useState(1);
-  const [nodeSize, setNodeSize] = useState(5);
+  // const [toggleLinks, setToggleLinks] = useState(false);
+  // const [link_distance, setLink_distance] = useState(50);
+  // const [arrowSize, setArrowSize] = useState(4);
+  // const [nodeColor, setNodeColor] = useState("#000000");
+  // const [nodeOpacity, setNodeOpacity] = useState(1);
+  // const [linkOpacity, setLinkOpacity] = useState(1);
+  // const [nodeSize, setNodeSize] = useState(5);
   const [graphSettings, graphDispatch] = useReducer(reducer, defaultGraph);
 
-  let additionalToggle = function () {
-    simulationRef.current.stop();
-    setToggleLinks(!toggleLinks);
-  };
+  // let additionalToggle = function () {
+  //   simulationRef.current.stop();
+  //   setToggleLinks(!toggleLinks);
+  // };
 
   useEffect(() => {
     setAdditionalLinks(
@@ -178,6 +191,28 @@ const App = () => {
     }
   }, [selectedNodes, active]);
 
+  let handleAddActiveId = function (id) {
+    let newNodes = [...selectedNodes];
+    id = parseInt(id);
+    if (selectedNodes.includes(id)) {
+      newNodes.splice(newNodes.indexOf(id), 1);
+    }
+    setSelectedNodes(newNodes);
+    setActive(id);
+  };
+
+  let handleAddSelectedId = function (id) {
+    let newNodes = [...selectedNodes];
+    id = parseInt(id);
+
+    if (active === id) {
+      setActive(null);
+      setSelectedNodes([...newNodes, id]);
+    } else if (!selectedNodes.includes(id)) {
+      setSelectedNodes([...newNodes, id]);
+    }
+  };
+
   let handleNodeClick = function (id, event, mutableNodes) {
     simulationRef.current.stop();
     let newNodes = [...selectedNodes];
@@ -224,19 +259,16 @@ const App = () => {
   let colors = ["blue", "green", "orange", "purple"];
 
   useEffect(() => {
+    console.log("changing graph");
     initVis();
   }, [
     selectedNodes,
+    active,
     links,
     nodes,
     simulation,
     additionalLinks,
-    toggleLinks,
-    link_distance,
-    arrowSize,
-    nodeColor,
-    nodeOpacity,
-    linkOpacity,
+    graphSettings,
   ]);
 
   function initVis() {
@@ -251,17 +283,17 @@ const App = () => {
       height: 1000,
       active: active,
       onDatapointClick: handleNodeClick,
+      simulationRef: simulationRef,
       selected: selectedNodes,
       simulation: simulation,
       additionalLinks: additionalLinks,
-      toggleLinks: toggleLinks,
-      simulationRef: simulationRef,
-      link_distance: link_distance,
-      arrowSize: arrowSize,
-      nodeColor: nodeColor,
-      nodeOpacity: nodeOpacity,
-      linkOpacity: linkOpacity,
-      nodeSize: nodeSize,
+      toggleLinks: graphSettings.toggleAdditionalLinks,
+      link_distance: graphSettings.linkDistance,
+      arrowSize: graphSettings.arrowSize,
+      nodeColor: graphSettings.nodeColor,
+      nodeOpacity: graphSettings.nodeOpacity,
+      linkOpacity: graphSettings.primaryLinkOpacity,
+      nodeSize: graphSettings.nodeSize,
     };
     vis = new Graph(refElement.current, d3Props);
   }
@@ -276,76 +308,17 @@ const App = () => {
         <h1 style={{ textAlign: "center" }}>
           Network Visualizer{graphSettings.nodeSize}
         </h1>
-        <button
-          onClick={() => {
-            graphDispatch({
-              prop: "nodeSize",
-              newValue: graphSettings.nodeSize + 1,
-            });
-          }}
-        >
-          ADD NODE SIZE
-        </button>
-        <h3
-          style={
-            activeFile
-              ? { color: "green", textAlign: "center" }
-              : { visibility: "hidden" }
-          }
-        >
-          {activeFile ? activeFile.name : "placeholder"}
-        </h3>
-        <div style={{ position: "absolute", top: "0" }}>
-          <button
-            onClick={() => {
-              console.log(primaryNode);
-              console.log(secondaryNodes);
-            }}
-          >
-            Nodes
-          </button>
-          <button
-            onClick={() => {
-              console.table(links);
-              console.log(additionalLinks);
-            }}
-          >
-            Links
-          </button>
-          <button
-            onClick={() => {
-              additionalToggle();
-            }}
-          >
-            TOGGLE {"" + toggleLinks.current}
-          </button>
-          <button
-            onClick={() => {
-              if (link_distance !== 10) {
-                simulationRef.current.stop();
-                setLink_distance(link_distance - 10);
-              }
-            }}
-          >
-            LINK D
-          </button>
-          <button
-            onClick={() => {
-              simulationRef.current.stop();
-              setArrowSize(arrowSize + 1);
-              console.log(arrowSize);
-            }}
-          >
-            Arrow Size++
-          </button>
-        </div>
       </div>
       <GraphPanel
+        handleAddActiveId={handleAddActiveId}
+        handleAddSelectedId={handleAddSelectedId}
         simulationRef={simulationRef}
-        setNodeColor={setNodeColor}
-        nodeColor={nodeColor}
-        arrowSize={arrowSize}
-        setArrowSize={setArrowSize}
+        graphDispatch={graphDispatch}
+        graphSettings={graphSettings}
+        // setNodeColor={setNodeColor}
+        // nodeColor={nodeColor}
+        // arrowSize={arrowSize}
+        // setArrowSize={setArrowSize}
       ></GraphPanel>
       {/* <FileSelector
         initializeData={initializeData}
