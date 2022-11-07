@@ -9,7 +9,7 @@ canvas {
   left: 0;
 }
 
-.panel-container {
+/* .panel-container {
   pointer-events: none;
   position: absolute;
   overflow: "hidden";
@@ -19,6 +19,20 @@ canvas {
   width: 40%;
   min-width: 300px;
   min-height: 100%;
+} */
+
+.panel-container {
+  display: flex;
+  position: absolute;
+  right: 0;
+  top: 2em;
+  padding-right: 2em;
+  gap: 2em;
+}
+
+.secondary-container {
+  display: flex;
+  gap: 1em;
 }
 
 .panel-primary-container {

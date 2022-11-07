@@ -19,6 +19,7 @@ const Panel = ({
   compareNodes,
 }) => {
   const [page, setPage] = useState(0);
+  const [latent, setLatent] = useState(false);
   // let [compareNodes, setCompareNodes] = useState([]);
   // let [activeNode, setActiveNode] = useState({});
 
@@ -67,10 +68,58 @@ const Panel = ({
 
   return (
     <div className="panel-container">
+      {activeNode ? (
+        <div>
+          <h2>Primary</h2>
+          <button
+            onClick={() => {
+              setLatent(!latent);
+            }}
+          >
+            LATENT
+          </button>
+          <NodeBox
+            latent={latent}
+            page={page}
+            setPage={setPage}
+            color={"red"}
+            nodeInfo={activeNode}
+            colors={colors}
+          ></NodeBox>{" "}
+        </div>
+      ) : null}
+      {compareNodes?.length ? (
+        <div>
+          <div className="secondary-column">
+            <h2>Secondary</h2>
+            <div
+              style={{ display: "flex", flexDirection: "column", gap: "1em" }}
+            >
+              {compareNodes?.map((obj, i) => {
+                return (
+                  <NodeBox
+                    latent={latent}
+                    page={page}
+                    setPage={setPage}
+                    color={colors[i]}
+                    nodeInfo={obj}
+                  ></NodeBox>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+
+  return (
+    <div className="panel-container">
       <h2 className="header">Primary</h2>
       <div className="panel-primary-container">
         {activeNode ? (
           <NodeBox
+            latent={latent}
             page={page}
             setPage={setPage}
             color={"red"}
@@ -84,6 +133,7 @@ const Panel = ({
         {compareNodes?.map((obj, i) => {
           return (
             <NodeBox
+              latent={latent}
               page={page}
               setPage={setPage}
               color={colors[i]}

@@ -3,7 +3,7 @@ import Row from "./Row.js";
 import NodeHeader from "./NodeHeader.js";
 import NodeInfo from "./NodeInfo.js";
 
-const NodeBox = ({ nodeInfo, color, colors, page, setPage }) => {
+const NodeBox = ({ nodeInfo, color, colors, page, setPage, latent }) => {
   // const [page, setPage] = useState(0);
   console.log("NODEINFO", nodeInfo);
   const makeRGBA = function (color, opacity = 0.2) {
@@ -56,6 +56,7 @@ const NodeBox = ({ nodeInfo, color, colors, page, setPage }) => {
           </span>
         </button> */}
         <NodeHeader
+          latent={latent}
           color={color}
           page={page}
           setPage={setPage}
@@ -66,11 +67,20 @@ const NodeBox = ({ nodeInfo, color, colors, page, setPage }) => {
             style={{ display: "inline-block", width: "fit-content" }}
             className="row-container"
           >
-            {nodeInfo?.observed_genotype_display[page].map((obs_geno, i) => {
-              return <Row color={color} key={i} row={obs_geno.genotype}></Row>;
-            })}
+            {latent
+              ? nodeInfo?.latent_genotype_display[page].map((obs_geno, i) => {
+                  return (
+                    <Row color={color} key={i} row={obs_geno.genotype}></Row>
+                  );
+                })
+              : nodeInfo?.observed_genotype_display[page].map((obs_geno, i) => {
+                  return (
+                    <Row color={color} key={i} row={obs_geno.genotype}></Row>
+                  );
+                })}
           </div>
           <NodeInfo
+            latent={latent}
             colors={colors}
             color={color}
             nodeInfo={nodeInfo}

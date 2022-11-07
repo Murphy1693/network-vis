@@ -1,6 +1,6 @@
 import React from "react";
 
-const NodeInfo = ({ nodeInfo, color, colors }) => {
+const NodeInfo = ({ nodeInfo, color, colors, latent }) => {
   console.log(colors);
   return (
     <div
@@ -25,10 +25,20 @@ const NodeInfo = ({ nodeInfo, color, colors }) => {
       ) : null}
       <label>{"Total Alleles"}</label>
       <span style={{ color: color, fontSize: "24px", marginBottom: "auto" }}>
-        {nodeInfo.total}
+        {latent ? nodeInfo.latent_total : nodeInfo.total}
       </span>
-      {nodeInfo.matches
+      {nodeInfo.matches && !latent
         ? nodeInfo.matches.map((shared, colorIndex) => {
+            console.log(colors[colorIndex]);
+            return (
+              <span key={colorIndex} style={{ color: colors[colorIndex] }}>
+                {shared + "/" + nodeInfo.total}
+              </span>
+            );
+          })
+        : null}
+      {nodeInfo.latent_matches && latent
+        ? nodeInfo.latent_matches.map((shared, colorIndex) => {
             console.log(colors[colorIndex]);
             return (
               <span key={colorIndex} style={{ color: colors[colorIndex] }}>
