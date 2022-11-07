@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { SketchPicker } from "react-color";
+import GraphPanelRow from "./GraphPanelRow.js";
 
 const GraphPanel = ({
   handleAddActiveId,
@@ -50,6 +51,49 @@ const GraphPanel = ({
   return (
     <div className="graph-panel-container">
       <div className="graph-panel">
+        {/* <GraphPanelRow
+          text={"Node Size"}
+          buttons={[
+            {
+              className: "minus-button minus-button--small",
+              callback: () => {
+                if (graphSettings.nodeSize > 0) {
+                  graphDispatch({
+                    prop: "nodeSize",
+                    newValue: graphSettings.nodeSize - 1,
+                  });
+                }
+              },
+            },
+            {
+              className: "plus-button plus-button--small",
+              callback: () => {
+                graphDispatch({
+                  prop: "nodeSize",
+                  newValue: graphSettings.nodeSize + 1,
+                });
+              },
+            },
+          ]}
+        ></GraphPanelRow>
+        <GraphPanelRow
+          text={"Node Color"}
+          buttons={[
+            {
+              buttonStyle: {
+                backgroundColor: `${graphSettings.nodeColor}`,
+                width: "20px",
+                height: "20px",
+                alignSelf: "end",
+                borderRadius: "50%",
+                border: "none",
+              },
+              callback: () => {
+                setSelecting({ selecting: true, aspect: "nodeColor" });
+              },
+            },
+          ]}
+        ></GraphPanelRow> */}
         <div>
           <span>Node Size</span>
           <div>

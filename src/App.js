@@ -15,6 +15,8 @@ import * as d3 from "d3";
 let vis;
 
 let defaultGraph = {
+  width: 1600,
+  height: 800,
   nodeSize: 5,
   nodeOpacity: 1,
   nodeColor: "#000000",
@@ -25,6 +27,7 @@ let defaultGraph = {
   primaryLinkColor: "#000000",
   secondaryLinkColor: "#000000",
   toggleAdditionalLinks: false,
+  zoom: 1,
 };
 
 // const reducer = (state, action) => {
@@ -279,8 +282,8 @@ const App = () => {
       },
       colors: colors,
       showLinks: true,
-      width: 2000,
-      height: 1000,
+      width: graphSettings.width,
+      height: graphSettings.height,
       active: active,
       onDatapointClick: handleNodeClick,
       simulationRef: simulationRef,
@@ -340,7 +343,11 @@ const App = () => {
           // });
         }}
       ></button> */}
-      <canvas width="2000" height="900" ref={refElement} />
+      <canvas
+        width={graphSettings.width}
+        height={graphSettings.height}
+        ref={refElement}
+      />
       <Panel
         clearSelected={clearSelected}
         colors={colors}

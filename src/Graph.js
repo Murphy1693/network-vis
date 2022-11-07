@@ -18,7 +18,7 @@ class Graph {
     this.link_distance = props.link_distance;
     this.arrowFill = props.arrowSize;
     this.nodeColor = props.nodeColor;
-    (this.linkOpacity = props.linkOpacity),
+    (this.primaryLinkOpacity = props.primaryLinkOpacity),
       (this.nodeOpacity = props.nodeOpacity),
       (this.cursor_x = -1);
     this.cursor_y = -1;
@@ -119,7 +119,7 @@ class Graph {
   ticked = () => {
     this.context.clearRect(0, 0, this.width, this.height);
     this.context.save();
-    this.context.globalAlpha = this.props.linkOpacity;
+    this.context.globalAlpha = this.props.primaryLinkOpacity;
     this.links.forEach((link) => {
       // this.drawLink(link);
       // this.context.beginPath();
@@ -127,7 +127,7 @@ class Graph {
       // this.context.strokeStyle = "black";
       // this.context.lineWidth = Math.round(this.nodeSize / 4);
       // this.context.stroke();
-      this.drawArrow(link, "black", 1, this.arrowFill);
+      this.drawArrow(link, "black", this.primaryLinkOpacity, this.arrowFill);
     });
     if (this.additionalToggle) {
       this.additionalLinks.forEach((link) => {
@@ -243,6 +243,7 @@ class Graph {
     );
 
     // // path from the side point back to the tip of the arrow, and then again to the opposite side point
+    this.context.globalAlpha = opacity;
     this.context.lineTo(endX, endY);
     this.context.lineTo(endX - arrowLen1, endY - arrowLen2);
 
@@ -338,9 +339,7 @@ class Graph {
         return 0.1;
       }
     });
-    const forceY = d3.forceY(this.height / 2).strength(() => {
-      return 0.1;
-    });
+    const forceY = d3.forceY(this.height / 2);
     // const forceY2 = d3.forceY(this.height / 2).strength(() => {
     //   return 0.1;
     // });
