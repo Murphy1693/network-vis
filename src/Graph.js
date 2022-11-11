@@ -36,7 +36,11 @@ class Graph {
     console.log(e);
 
     e.preventDefault();
-    let x = this.simulation.find(e.pageX, e.pageY - 300, this.nodeSize * 1.5);
+    let x = this.simulation.find(
+      e.pageX - 200,
+      e.pageY - 300,
+      this.nodeSize * 1.5
+    );
     console.log(x);
     if (x) {
       this.links.forEach(function (link) {
@@ -55,7 +59,7 @@ class Graph {
   handleMousedown = (e) => {
     this.mousedown = true;
     e.subject = this.simulation.find(
-      e.pageX,
+      e.pageX - 200,
       e.pageY - 300,
       this.nodeSize * 1.5
     );
@@ -104,7 +108,7 @@ class Graph {
 
   handleMousemove = (e) => {
     if (this.mousedown) {
-      this.cursor_x = e.pageX;
+      this.cursor_x = e.pageX - 200;
       this.cursor_y = e.pageY;
     } else {
       this.cursor_x = null;
@@ -350,7 +354,7 @@ class Graph {
     const forceNode = d3
       .forceManyBody()
       .strength(() => {
-        return -30 * Math.max(1, this.nodeSize / 5);
+        return -15 * Math.max(1, this.nodeSize / 5);
       })
       .theta(0.99);
     const forceLink = d3

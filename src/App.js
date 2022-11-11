@@ -15,12 +15,12 @@ import * as d3 from "d3";
 let vis;
 
 let defaultGraph = {
-  width: 1600,
-  height: 800,
-  nodeSize: 5,
+  width: 1000,
+  height: 600,
+  nodeSize: 4,
   nodeOpacity: 1,
   nodeColor: "#000000",
-  linkDistance: 50,
+  linkDistance: 30,
   arrowSize: 4,
   primaryLinkOpacity: 1,
   secondaryLinkOpacity: 1,
@@ -162,9 +162,11 @@ const App = () => {
         return sec;
       });
       primary.matches = [];
+      primary.latent_matches = [];
       primary.source = [];
       for (let i = 0; i < secondaries.length; i++) {
         primary.matches.push(secondaries[i].shared_count);
+        primary.latent_matches.push(secondaries[i].latent_shared_count);
       }
       for (let i = 0; i < links.length; i++) {
         if (links[i].to === primary.id || links[i].from === primary.id) {

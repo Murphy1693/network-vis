@@ -28,6 +28,7 @@ const NodeBox = ({ nodeInfo, color, colors, page, setPage, latent }) => {
     backgroundColor: "white",
     margin: "auto",
     border: `2px solid ${color || "black"}`,
+    scale: ".75",
   };
 
   return (
@@ -68,16 +69,18 @@ const NodeBox = ({ nodeInfo, color, colors, page, setPage, latent }) => {
             className="row-container"
           >
             {latent
-              ? nodeInfo?.latent_genotype_display[page].map((obs_geno, i) => {
+              ? nodeInfo?.latent_genotype_display[page]?.map((obs_geno, i) => {
                   return (
                     <Row color={color} key={i} row={obs_geno.genotype}></Row>
                   );
                 })
-              : nodeInfo?.observed_genotype_display[page].map((obs_geno, i) => {
-                  return (
-                    <Row color={color} key={i} row={obs_geno.genotype}></Row>
-                  );
-                })}
+              : nodeInfo?.observed_genotype_display[page]?.map(
+                  (obs_geno, i) => {
+                    return (
+                      <Row color={color} key={i} row={obs_geno.genotype}></Row>
+                    );
+                  }
+                )}
           </div>
           <NodeInfo
             latent={latent}

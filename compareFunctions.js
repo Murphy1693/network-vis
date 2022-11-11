@@ -138,11 +138,11 @@ export const createColorAndCount = (activeNode, selectedNode) => {
             newStr += "0";
           } else if (c !== d) {
             if (d === "1") {
-              selected_total_count++;
+              latent_selected_total_count++;
               // solid selected color
               newStr += "1";
             } else if (d === "0") {
-              primary_total_count++;
+              latent_primary_total_count++;
               // border red
               newStr += "3";
             }
@@ -203,7 +203,6 @@ export const createColorAndCount = (activeNode, selectedNode) => {
 
     newSelectedNode.shared_count = shared_count;
     newSelectedNode.latent_shared_count = latent_shared_count;
-
     console.log(newActiveNode, newSelectedNode);
     return [newActiveNode, newSelectedNode];
   } else if (activeNode && !selectedNode) {
@@ -225,6 +224,9 @@ export const createColorAndCount = (activeNode, selectedNode) => {
     newActiveNode.total = primary_total_count;
     newActiveNode.observed_genotype_display = paginateArray(
       newActiveNode.observed_genotype
+    );
+    newActiveNode.latent_genotype_display = paginateArray(
+      newActiveNode.flat_latent_genotype
     );
     return newActiveNode;
   }

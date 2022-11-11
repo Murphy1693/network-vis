@@ -71,13 +71,6 @@ const Panel = ({
       {activeNode ? (
         <div>
           <h2>Primary</h2>
-          <button
-            onClick={() => {
-              setLatent(!latent);
-            }}
-          >
-            LATENT
-          </button>
           <NodeBox
             latent={latent}
             page={page}

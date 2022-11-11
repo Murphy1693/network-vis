@@ -256,6 +256,7 @@ const GraphPanel = ({
         <div>
           <span>Primary by ID</span>
           <input
+            className="graph-input"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleAddActiveId(primaryInput);
@@ -271,6 +272,7 @@ const GraphPanel = ({
         <div>
           <span>Secondary by ID</span>
           <input
+            className="graph-input"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleAddSelectedId(secondaryInput);

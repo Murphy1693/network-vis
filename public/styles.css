@@ -1,12 +1,18 @@
-body {
+
+html, body {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
   font-weight: bold;
+  /* height: 100%; */
+  /* background: linear-gradient(to top, lightgrey 0%, lightgrey 1%, #e0e0e0 26%, #efefef 48%, #d9d9d9 75%, #bcbcbc 100%); */
+
 }
 
 canvas {
   position: absolute;
   top: 300px;
-  left: 0;
+  left: 200px;
+  background-color: white;
+
 }
 
 /* .panel-container {
@@ -25,7 +31,7 @@ canvas {
   display: flex;
   position: absolute;
   right: 0;
-  top: 2em;
+  top: 0;
   padding-right: 2em;
   gap: 2em;
 }
@@ -62,15 +68,14 @@ canvas {
 .graph-panel-container {
   z-index: 4;
   background-color: white;
-  position: absolute;
-  min-width: 300px;
-  top: 1rem;
-  left: 1rem;
-  gap: 1rem;
+  position: fixed;
+  /* min-width: 300px; */
+  font-size: 12px;
+  top: 0;
+  left: 0;
   border: 2px solid black;
   box-shadow: rgb(136, 136, 136) 0px 5px 15px;
   padding: 1rem;
-  overflow: hidden;
 }
 
 .graph-panel > div {
@@ -116,11 +121,12 @@ canvas {
 
 label {
   text-decoration: underline;
+  line-height: 20px;
 }
 
 h1, h2 {
   text-align: center;
-  font-size: 32px;
+  font-size: 20px;
   color: rgb(84, 84, 84);
   text-shadow: 5px 5px 10px rgb(114 114 114)
 }
@@ -225,4 +231,8 @@ button:active {
 
 .minus-button--large {
 	font-size: 22px;
+}
+
+.graph-input {
+  width: 40px;
 }

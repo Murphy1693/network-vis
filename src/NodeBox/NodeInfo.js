@@ -19,7 +19,7 @@ const NodeInfo = ({ nodeInfo, color, colors, latent }) => {
         >
           <label>Shared Alleles</label>
           <span style={{ color: "red", paddingLeft: "10px", fontSize: "24px" }}>
-            {nodeInfo.shared_count}
+            {latent ? nodeInfo.latent_shared_count : nodeInfo.shared_count}
           </span>
         </div>
       ) : null}
@@ -42,7 +42,7 @@ const NodeInfo = ({ nodeInfo, color, colors, latent }) => {
             console.log(colors[colorIndex]);
             return (
               <span key={colorIndex} style={{ color: colors[colorIndex] }}>
-                {shared + "/" + nodeInfo.total}
+                {shared + "/" + nodeInfo.latent_total}
               </span>
             );
           })
