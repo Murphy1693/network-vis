@@ -1,7 +1,7 @@
 import React from "react";
+import NodeMatches from "./NodeMatches.js";
 
 const NodeInfo = ({ nodeInfo, color, colors, latent }) => {
-  console.log(colors);
   return (
     <div
       className="info-container"
@@ -27,7 +27,12 @@ const NodeInfo = ({ nodeInfo, color, colors, latent }) => {
       <span style={{ color: color, fontSize: "24px", marginBottom: "auto" }}>
         {latent ? nodeInfo.latent_total : nodeInfo.total}
       </span>
-      {nodeInfo.matches && !latent
+      <NodeMatches
+        colors={colors}
+        matches={latent ? nodeInfo.latent_matches : nodeInfo.matches}
+        total={latent ? nodeInfo.latent_total : nodeInfo.total}
+      ></NodeMatches>
+      {/* {nodeInfo.matches && !latent
         ? nodeInfo.matches.map((shared, colorIndex) => {
             console.log(colors[colorIndex]);
             return (
@@ -46,7 +51,7 @@ const NodeInfo = ({ nodeInfo, color, colors, latent }) => {
               </span>
             );
           })
-        : null}
+        : null} */}
       <label>{"Infection Time"}</label>
       <span>{Math.round(nodeInfo.infection_time)}</span>
       <label>{"Infection Duration"}</label>

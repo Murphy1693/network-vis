@@ -4,10 +4,10 @@ let zip = function (arr1, arr2, callback) {
   }
 };
 
-export const paginateArray = function (arr) {
+export const paginateArray = function (arr, pageSize) {
   let newArr = [];
   let prev = 0;
-  for (let i = 20; i <= arr.length; i += 20) {
+  for (let i = pageSize; i <= arr.length; i += pageSize) {
     newArr.push(arr.slice(prev, i));
     prev = i;
   }
@@ -101,8 +101,8 @@ export const compareObserved = function (activeNode, selectedNode, primary) {
 
   return {
     id: selectedNode.id,
-    observed_genotype_color: paginateArray(colors),
-    latent_genotype_color: paginateArray(colors2),
+    observed_genotype_color: paginateArray(colors, 20),
+    latent_genotype_color: paginateArray(colors2, 20),
     shared: shared_count,
     total: selected_total_count,
   };
@@ -184,19 +184,23 @@ export const createColorAndCount = (activeNode, selectedNode) => {
       }
     );
     newActiveNode.observed_genotype_display = paginateArray(
-      newActiveNode.observed_genotype
+      newActiveNode.observed_genotype,
+      20
     );
     newActiveNode.latent_genotype_display = paginateArray(
-      newActiveNode.flat_latent_genotype
+      newActiveNode.flat_latent_genotype,
+      20
     );
     newActiveNode.total = primary_total_count;
     newActiveNode.latent_total = latent_primary_total_count;
 
     newSelectedNode.observed_genotype_display = paginateArray(
-      observed_genotype_display
+      observed_genotype_display,
+      20
     );
     newSelectedNode.latent_genotype_display = paginateArray(
-      latent_genotype_display
+      latent_genotype_display,
+      20
     );
     newSelectedNode.total = selected_total_count;
     newSelectedNode.latent_total = latent_selected_total_count;
@@ -223,10 +227,12 @@ export const createColorAndCount = (activeNode, selectedNode) => {
     newActiveNode.latent_total = latent_primary_total_count++;
     newActiveNode.total = primary_total_count;
     newActiveNode.observed_genotype_display = paginateArray(
-      newActiveNode.observed_genotype
+      newActiveNode.observed_genotype,
+      20
     );
     newActiveNode.latent_genotype_display = paginateArray(
-      newActiveNode.flat_latent_genotype
+      newActiveNode.flat_latent_genotype,
+      20
     );
     return newActiveNode;
   }

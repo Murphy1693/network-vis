@@ -72,7 +72,6 @@ const App = () => {
   // const [linkOpacity, setLinkOpacity] = useState(1);
   // const [nodeSize, setNodeSize] = useState(5);
   const [graphSettings, graphDispatch] = useReducer(reducer, defaultGraph);
-
   // let additionalToggle = function () {
   //   simulationRef.current.stop();
   //   setToggleLinks(!toggleLinks);
